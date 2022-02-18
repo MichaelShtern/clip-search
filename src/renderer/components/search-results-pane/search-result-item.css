@@ -1,0 +1,29 @@
+.SearchResultItem {
+  color: #676767;
+}
+
+.SearchResultItem:hover {
+  background: #e8e8e8;
+}
+
+.SearchResultItem-Selected {
+  color: white;
+  background-color: #0060c0;
+}
+
+.SearchResultItem-Selected:hover {
+  background-color: #0060c0;
+}
+
+.SearchResultItem-Highlighted {
+  color: #0066bf;
+  font-weight: bolder;
+}
+
+.SearchResultItem-Selected .SearchResultItem-Highlighted {
+  color: #9dddff;
+}
+
+.SearchResultItem-Tag {
+  font-size: smaller;
+}
