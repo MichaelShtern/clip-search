@@ -9,7 +9,16 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  shell,
+  ipcMain,
+  Tray,
+  Menu,
+  globalShortcut,
+  screen,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -24,11 +33,18 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+let tray: Tray | null = null;
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
+ipcMain.on('toMain', (_, args) => {
+  if (args === 'hide') {
+    mainWindow?.minimize();
+    setTimeout(async () => {
+      // robot.keyTap("v", "control");
+      // keyboard.type("Hello World!");
+      // await keyboard.pressKey(Key.LeftControl, Key.V);
+      // await keyboard.releaseKey(Key.LeftControl, Key.V);
+    }, 10);
+  }
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -56,23 +72,43 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '../../assets');
+
+const getAssetPath = (...paths: string[]): string => {
+  return path.join(RESOURCES_PATH, ...paths);
+};
+
+const createTray = () => {
+  tray = new Tray(getAssetPath('icon.png'));
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Exit',
+      type: 'normal',
+      click: () => {
+        mainWindow?.close();
+      },
+    },
+  ]);
+  tray.setToolTip('Quickclip');
+  tray.setContextMenu(contextMenu);
+};
+
 const createWindow = async () => {
   if (isDevelopment) {
     await installExtensions();
   }
 
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../../assets');
-
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
-
   mainWindow = new BrowserWindow({
-    show: false,
-    width: 1024,
-    height: 728,
+    show: true,
+    width: 512,
+    height: 276,
+    useContentSize: true,
+    frame: false,
+    resizable: false,
+    movable: true,
+    skipTaskbar: true,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -94,6 +130,7 @@ const createWindow = async () => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+    tray = null;
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);
@@ -124,12 +161,24 @@ app.on('window-all-closed', () => {
 
 app
   .whenReady()
-  .then(() => {
-    createWindow();
+  .then(async () => {
+    await createWindow();
+    createTray();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
+    });
+
+    globalShortcut.register('CommandOrControl+Shift+C', () => {
+      const point = screen.getCursorScreenPoint();
+      mainWindow?.show();
+      mainWindow?.setPosition(point.x - 15, point.y - 20);
+      mainWindow?.setSize(512, 276);
+    });
+
+    globalShortcut.register('CommandOrControl+Shift+V', () => {
+      mainWindow?.minimize();
     });
   })
   .catch(console.log);

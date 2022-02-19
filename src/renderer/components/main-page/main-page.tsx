@@ -12,7 +12,11 @@ export const pageWidthInRem = 32;
 export const pageHeightInRem = 17.25;
 
 export const MainPage: React.FC = () => {
+  // Set base fond size on html
   document.documentElement.style.fontSize = baseFontSize;
+
+  // Avoid showing scrollbars, the size is pre-determined and should be fixed
+  document.body.style.overflow = 'hidden';
 
   const [searchText, setSearchText] = useState('');
   const [searchResults, setSearchResults] = useState<ISearchResult>({

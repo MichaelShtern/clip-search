@@ -13,7 +13,7 @@ export interface ISearchResultPaneProps {
   searchResults: ISearchResultItem[];
 }
 
-export const SearchResultPane: React.FC<ISearchResultPaneProps> = ({
+const SearchResultPaneWithResults: React.FC<ISearchResultPaneProps> = ({
   searchText,
   searchResults,
 }: ISearchResultPaneProps) => {
@@ -129,5 +129,21 @@ export const SearchResultPane: React.FC<ISearchResultPaneProps> = ({
         />
       ))}
     </div>
+  );
+};
+
+export const SearchResultPane: React.FC<ISearchResultPaneProps> = ({
+  searchText,
+  searchResults,
+}: ISearchResultPaneProps) => {
+  if (searchResults.length === 0) {
+    return null;
+  }
+
+  return (
+    <SearchResultPaneWithResults
+      searchText={searchText}
+      searchResults={searchResults}
+    />
   );
 };
