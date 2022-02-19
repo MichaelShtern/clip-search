@@ -21,6 +21,7 @@ import {
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import { keyboard, Key } from '@nut-tree/nut-js';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
@@ -38,11 +39,12 @@ let tray: Tray | null = null;
 ipcMain.on('toMain', (_, args) => {
   if (args === 'hide') {
     mainWindow?.minimize();
+
+    // The renderer should have copied the value to clipboard, but that
+    // operation may take a few ms
     setTimeout(async () => {
-      // robot.keyTap("v", "control");
-      // keyboard.type("Hello World!");
-      // await keyboard.pressKey(Key.LeftControl, Key.V);
-      // await keyboard.releaseKey(Key.LeftControl, Key.V);
+      await keyboard.pressKey(Key.LeftControl, Key.V);
+      await keyboard.releaseKey(Key.LeftControl, Key.V);
     }, 10);
   }
 });
@@ -91,7 +93,7 @@ const createTray = () => {
       },
     },
   ]);
-  tray.setToolTip('Quickclip');
+  tray.setToolTip('Quick Clip');
   tray.setContextMenu(contextMenu);
 };
 
@@ -101,7 +103,7 @@ const createWindow = async () => {
   }
 
   mainWindow = new BrowserWindow({
-    show: true,
+    show: false,
     width: 512,
     height: 276,
     useContentSize: true,
