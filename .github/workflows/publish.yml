@@ -17,7 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [macos-latest]
 
     steps:
       - name: Checkout git repo
@@ -37,6 +37,7 @@ jobs:
         env:          
           # This is used for uploading release assets to github
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: false
         run: |
           npm run postinstall
           npm run build
