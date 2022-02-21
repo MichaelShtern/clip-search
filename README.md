@@ -26,6 +26,7 @@ QuickClip is built on <a href="https://electron.atom.io/">Electron</a>, <a href=
 </div>
 
 <div align="left">
+
 ### Install
 
 Clone the repo and install dependencies:
