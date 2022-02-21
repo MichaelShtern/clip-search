@@ -35,6 +35,7 @@ export default class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
+keyboard.config.autoDelayMs = 0;
 
 ipcMain.on('toMain', (_, args) => {
   if (args === 'hide') {
@@ -174,9 +175,20 @@ app
 
     globalShortcut.register('CommandOrControl+Shift+C', () => {
       const point = screen.getCursorScreenPoint();
+
       mainWindow?.show();
-      mainWindow?.setPosition(point.x - 15, point.y - 20);
-      mainWindow?.setSize(512, 276);
+
+      // setSize has issue with 125% DPI in windows, therefore we prefer using
+      // setBounds ot setContentBounds which is more reliable
+      mainWindow?.setContentBounds(
+        {
+          width: 512,
+          height: 276,
+          x: point.x,
+          y: point.y,
+        },
+        false
+      );
     });
 
     globalShortcut.register('CommandOrControl+Shift+V', () => {
