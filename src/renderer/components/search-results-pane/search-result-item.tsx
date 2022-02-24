@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import { DeleteIcon, EditIcon } from '@fluentui/react-icons-mdl2';
 import { breakSearchQueryToNormalHighlighPairs } from '../../utils/text-utils';
 import './search-result-item.css';
 
@@ -10,6 +11,7 @@ export interface SearchResultItemProps {
   height: number;
   index: number;
   onItemSelected: (index: number) => void;
+  onItemDelete: (index: number) => void;
 }
 
 export const SearchResultItem: React.FC<SearchResultItemProps> = ({
@@ -20,11 +22,8 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
   highlightedText: higlihtedText,
   index,
   onItemSelected,
+  onItemDelete,
 }: SearchResultItemProps) => {
-  const className = isSelected
-    ? 'SearchResultItem SearchResultItem-Selected'
-    : 'SearchResultItem';
-
   const highlightedValuesPairs = useMemo(
     () => breakSearchQueryToNormalHighlighPairs(value, higlihtedText),
     [value, higlihtedText]
@@ -43,6 +42,39 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
     [tags, higlihtedText]
   );
 
+  const deleteButtonKeyDown = useCallback(
+    (event) => {
+      if (event.key === 'Enter') {
+        onItemDelete(index);
+        event.stopPropagation();
+      }
+    },
+    [onItemDelete, index]
+  );
+
+  const editButtonKeyDown = useCallback((event) => {
+    if (event.key === 'Enter') {
+      event.stopPropagation();
+    }
+  }, []);
+
+  const onEditButtonClick = useCallback((event) => {
+    event.stopPropagation();
+  }, []);
+
+  const onDeleteButtonClick = useCallback(
+    (event) => {
+      onItemDelete(index);
+
+      event.stopPropagation();
+    },
+    [onItemDelete, index]
+  );
+
+  const className = isSelected
+    ? 'SearchResultItem SearchResultItem-Selected'
+    : 'SearchResultItem';
+
   return (
     <div
       onClick={() => onItemSelected(index)}
@@ -57,6 +89,47 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
         cursor: 'pointer',
       }}
     >
+      <div
+        className="SearchResultButtonContainer"
+        style={{
+          position: 'relative',
+        }}
+      >
+        <div
+          tabIndex={0}
+          className="SearchResultItemButton"
+          style={{
+            position: 'absolute',
+            right: '1.5rem',
+            zIndex: 1,
+            height: '1.3rem',
+          }}
+          onKeyDown={editButtonKeyDown}
+          onClick={onEditButtonClick}
+        >
+          <EditIcon
+            style={{ fontSize: '1rem', position: 'relative', top: '-0.15rem' }}
+          />
+        </div>
+
+        <div
+          tabIndex={0}
+          className="SearchResultItemButton"
+          style={{
+            position: 'absolute',
+            right: '0rem',
+            zIndex: 1,
+            height: '1.3rem',
+          }}
+          onKeyDown={deleteButtonKeyDown}
+          onClick={onDeleteButtonClick}
+        >
+          <DeleteIcon
+            style={{ fontSize: '1rem', position: 'relative', top: '-0.15rem' }}
+          />
+        </div>
+      </div>
+
       {highlightedValuesPairs.map((pair) => (
         <span key={pair.index}>
           {pair.normal}

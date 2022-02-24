@@ -52,6 +52,21 @@ export class StoreService {
 
     return newItem;
   };
+
+  deleteItem = async (id: string): Promise<void> => {
+    await this.initCache();
+
+    if (this.clipboardCache) {
+      this.clipboardCache.items = this.clipboardCache?.items.filter(
+        (item) => item.id !== id
+      );
+
+      await localforage.setItem<IClipboard>(
+        this.clipboardStorageKey,
+        this.clipboardCache as IClipboard
+      );
+    }
+  };
 }
 
 export const StoreServiceGlobal = new StoreService();

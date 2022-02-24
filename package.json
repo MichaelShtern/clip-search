@@ -146,6 +146,7 @@
     ]
   },
   "devDependencies": {
+    "@fluentui/react-icons-mdl2": "^1.2.16",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.4",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
     "@testing-library/jest-dom": "^5.16.1",
