@@ -33,6 +33,9 @@ export default class AppUpdater {
   }
 }
 
+const windowWidth = 512;
+const windowHeight = 276;
+
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
 keyboard.config.autoDelayMs = 0;
@@ -105,8 +108,8 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 512,
-    height: 276,
+    width: windowWidth,
+    height: windowHeight,
     useContentSize: true,
     frame: false,
     resizable: false,
@@ -175,6 +178,31 @@ app
 
     globalShortcut.register('CommandOrControl+Shift+C', () => {
       const point = screen.getCursorScreenPoint();
+      const display = screen.getDisplayNearestPoint(point);
+
+      // Adjust point so that cursor doesn't point directly on search text
+      point.x += 5;
+      point.y += 10;
+
+      // Adjust point to fit the display wokring area
+      // The aroking area is the display size excluding the taskbar below
+      if (point.x < display.workArea.x) {
+        point.x = display.workArea.x;
+      } else if (
+        point.x + windowWidth >
+        display.workArea.x + display.workArea.width
+      ) {
+        point.x = display.workArea.x + display.workArea.width - windowWidth;
+      }
+
+      if (point.y < display.workArea.y) {
+        point.y = display.workArea.y;
+      } else if (
+        point.y + windowHeight >
+        display.workArea.y + display.workArea.height
+      ) {
+        point.y = display.workArea.y + display.workArea.height - windowHeight;
+      }
 
       mainWindow?.show();
 
@@ -182,8 +210,8 @@ app
       // setBounds ot setContentBounds which is more reliable
       mainWindow?.setContentBounds(
         {
-          width: 512,
-          height: 276,
+          width: windowWidth,
+          height: windowHeight,
           x: point.x,
           y: point.y,
         },
