@@ -43,6 +43,18 @@ export const MainPage: React.FC = () => {
 
   const searchBoxRef = useRef<ISearchBoxHandle | null>(null);
 
+  const onDeleteItemCbk = useCallback(
+    async (id: string) => {
+      await StoreServiceGlobal.deleteItem(id);
+      const newSearchResults: ISearchResult = {
+        results: searchResults.results.filter((res) => res.id !== id),
+      };
+
+      setSearchResults(newSearchResults);
+    },
+    [searchResults, setSearchResults]
+  );
+
   const onAddItem = useCallback(async (value: string, tags: string[]) => {
     setShowAddItemPane(false);
     await StoreServiceGlobal.addItem(value, tags);
@@ -71,8 +83,6 @@ export const MainPage: React.FC = () => {
     <div
       style={{
         width: `${pageWidthInRem}rem`,
-        // maxHeight: pageHeightInRem + "rem",
-        // minHeight: pageHeightInRem / 4 + "rem",
         height: `${pageHeightInRem}rem`,
         background: '#f3f3f3',
         overflow: 'hidden',
@@ -86,6 +96,7 @@ export const MainPage: React.FC = () => {
       <SearchResultPane
         searchText={searchText}
         searchResults={searchResults.results}
+        onDeleteItem={onDeleteItemCbk}
       />
       {showItemNotFoundPane && !showAddItemPane && (
         <ItemNotFoundPane

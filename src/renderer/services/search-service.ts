@@ -10,17 +10,6 @@ export interface ISearchResultItem {
   tags: string[];
 }
 
-// const defaultItems: ISearchResultItem[] = Array.from(Array(20).keys()).map(
-//     (item) => {
-//         const id = item.toString();
-//         return {
-//             id: id,
-//             value: "michast" + id + "@microsoft.com",
-//             tags: ["email", "account"],
-//         };
-//     }
-// );
-
 export const search = async (query: string): Promise<ISearchResult> => {
   const { items } = await StoreServiceGlobal.getClipboard();
 

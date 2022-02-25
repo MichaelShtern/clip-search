@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ISearchResultItem } from '../../services/search-service';
 import { convertPxToRem, convertRemToPx } from '../../utils/unit-converter';
 import { SearchResultItem } from './search-result-item';
+import './search-result-pane.css';
 
 const searchResultItemHeight = 1.5;
 const searchResultItemVisibleCount = 10;
@@ -11,11 +12,13 @@ const searchPaneMaxHeight =
 export interface ISearchResultPaneProps {
   searchText: string;
   searchResults: ISearchResultItem[];
+  onDeleteItem: (id: string) => void;
 }
 
 const SearchResultPaneWithResults: React.FC<ISearchResultPaneProps> = ({
   searchText,
   searchResults,
+  onDeleteItem,
 }: ISearchResultPaneProps) => {
   const paneRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -27,6 +30,17 @@ const SearchResultPaneWithResults: React.FC<ISearchResultPaneProps> = ({
       paneRef.current.scrollTop = 0;
     }
   }, [searchResults, setSelectedIndex]);
+
+  const onItemDeleteCbk = useCallback(
+    (index: number) => {
+      const item = searchResults[index];
+
+      if (item) {
+        onDeleteItem(item.id);
+      }
+    },
+    [searchResults, onDeleteItem]
+  );
 
   const keyDownCallback = useCallback(
     async (event: KeyboardEvent) => {
@@ -110,6 +124,8 @@ const SearchResultPaneWithResults: React.FC<ISearchResultPaneProps> = ({
 
   return (
     <div
+      tabIndex={0}
+      className="SearchResultPane"
       ref={paneRef}
       style={{
         maxHeight: `${searchPaneMaxHeight}rem`,
@@ -125,6 +141,7 @@ const SearchResultPaneWithResults: React.FC<ISearchResultPaneProps> = ({
           isSelected={index === selectedIndex}
           height={searchResultItemHeight}
           index={index}
+          onItemDelete={onItemDeleteCbk}
           onItemSelected={(indx) => setSelectedIndex(indx)}
         />
       ))}
@@ -135,6 +152,7 @@ const SearchResultPaneWithResults: React.FC<ISearchResultPaneProps> = ({
 export const SearchResultPane: React.FC<ISearchResultPaneProps> = ({
   searchText,
   searchResults,
+  onDeleteItem,
 }: ISearchResultPaneProps) => {
   if (searchResults.length === 0) {
     return null;
@@ -144,6 +162,7 @@ export const SearchResultPane: React.FC<ISearchResultPaneProps> = ({
     <SearchResultPaneWithResults
       searchText={searchText}
       searchResults={searchResults}
+      onDeleteItem={onDeleteItem}
     />
   );
 };

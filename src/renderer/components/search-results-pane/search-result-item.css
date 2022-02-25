@@ -27,3 +27,32 @@
 .SearchResultItem-Tag {
   font-size: smaller;
 }
+
+.SearchResultButtonContainer {
+  visibility: hidden;
+}
+
+.SearchResultItem:hover .SearchResultButtonContainer {
+  visibility: visible;
+}
+
+.SearchResultItem-Selected .SearchResultButtonContainer {
+  visibility: visible;
+}
+
+.SearchResultItem .SearchResultItemButton:hover {
+  background-color: #d9d9d9;
+}
+
+.SearchResultItem-Selected .SearchResultItemButton:hover {
+  background-color: #387bbe;
+}
+
+.SearchResultItem .SearchResultItemButton:focus {
+  background-color: #d9d9d9;
+  outline: 0px solid transparent;
+}
+
+.SearchResultItem-Selected .SearchResultItemButton:focus {
+  background-color: #387bbe;
+}

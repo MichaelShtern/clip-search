@@ -15,13 +15,25 @@ export const AddItemPane: React.FC<IAddItemPaneProps> = ({
   const inputValueRef = useRef<HTMLInputElement | null>(null);
   const inputTagRef = useRef<HTMLInputElement | null>(null);
 
+  const onAddCallback = useCallback(() => {
+    const value = inputValueRef.current?.value;
+    if (!value) {
+      onCancel();
+    }
+    const tagsString = inputTagRef.current?.value || '';
+    const tags = tagsString.split(' ').filter((tag) => !!tag);
+    onAdd(value as string, tags);
+  }, [inputValueRef, onAdd, onCancel]);
+
   const keyDownCallback = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onCancel();
+      } else if (event.key === 'Enter') {
+        onAddCallback();
       }
     },
-    [onCancel]
+    [onCancel, onAddCallback]
   );
 
   const cancelButtonKeyDownCallback = useCallback(
@@ -29,6 +41,8 @@ export const AddItemPane: React.FC<IAddItemPaneProps> = ({
       if (event.key === 'Enter') {
         onCancel();
       }
+
+      event.stopPropagation();
     },
     [onCancel]
   );
@@ -52,16 +66,6 @@ export const AddItemPane: React.FC<IAddItemPaneProps> = ({
   const onAddButtonLostFocusCallback = useCallback(() => {
     inputValueRef.current?.focus();
   }, [inputValueRef]);
-
-  const onAddCallback = useCallback(() => {
-    const value = inputValueRef.current?.value;
-    if (!value) {
-      onCancel();
-    }
-    const tagsString = inputTagRef.current?.value || '';
-    const tags = tagsString.split(' ').filter((tag) => !!tag);
-    onAdd(value as string, tags);
-  }, [inputValueRef, onAdd, onCancel]);
 
   const addButtonKeyDownCallback = useCallback(
     (event) => {
