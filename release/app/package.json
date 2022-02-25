@@ -1,6 +1,6 @@
 {
   "name": "QuickClip",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Contextual search clipboard assistant",
   "main": "./dist/main/main.js",
   "author": {
