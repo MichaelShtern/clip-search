@@ -12,6 +12,7 @@ export interface SearchResultItemProps {
   index: number;
   onItemSelected: (index: number) => void;
   onItemDelete: (index: number) => void;
+  onItemEdit: (index: number) => void;
 }
 
 export const SearchResultItem: React.FC<SearchResultItemProps> = ({
@@ -23,6 +24,7 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
   index,
   onItemSelected,
   onItemDelete,
+  onItemEdit,
 }: SearchResultItemProps) => {
   const highlightedValuesPairs = useMemo(
     () => breakSearchQueryToNormalHighlighPairs(value, higlihtedText),
@@ -52,15 +54,23 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
     [onItemDelete, index]
   );
 
-  const editButtonKeyDown = useCallback((event) => {
-    if (event.key === 'Enter') {
-      event.stopPropagation();
-    }
-  }, []);
+  const editButtonKeyDown = useCallback(
+    (event) => {
+      if (event.key === 'Enter') {
+        onItemEdit(index);
+        event.stopPropagation();
+      }
+    },
+    [onItemEdit, index]
+  );
 
-  const onEditButtonClick = useCallback((event) => {
-    event.stopPropagation();
-  }, []);
+  const onEditButtonClick = useCallback(
+    (event) => {
+      onItemEdit(index);
+      event.stopPropagation();
+    },
+    [index, onItemEdit]
+  );
 
   const onDeleteButtonClick = useCallback(
     (event) => {

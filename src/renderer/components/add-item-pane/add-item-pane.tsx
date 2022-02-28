@@ -3,17 +3,27 @@ import './add-item-pane.css';
 
 export interface IAddItemPaneProps {
   initialValue: string;
+  initialTagValue: string[];
+  id: string;
+  editMode: boolean;
   onCancel: () => void;
   onAdd: (value: string, tags: string[]) => void;
+  onEdit: (value: string, tags: string[], id: string) => void;
 }
 
 export const AddItemPane: React.FC<IAddItemPaneProps> = ({
   onAdd,
+  onEdit,
   onCancel,
   initialValue,
+  initialTagValue,
+  id,
+  editMode,
 }: IAddItemPaneProps) => {
   const inputValueRef = useRef<HTMLInputElement | null>(null);
   const inputTagRef = useRef<HTMLInputElement | null>(null);
+
+  const initialTagsValueSpaceSeperated = initialTagValue.join(' ');
 
   const onAddCallback = useCallback(() => {
     const value = inputValueRef.current?.value;
@@ -22,8 +32,12 @@ export const AddItemPane: React.FC<IAddItemPaneProps> = ({
     }
     const tagsString = inputTagRef.current?.value || '';
     const tags = tagsString.split(' ').filter((tag) => !!tag);
-    onAdd(value as string, tags);
-  }, [inputValueRef, onAdd, onCancel]);
+    if (editMode) {
+      onEdit(value as string, tags, id);
+    } else {
+      onAdd(value as string, tags);
+    }
+  }, [inputValueRef, inputTagRef, id, editMode, onAdd, onEdit, onCancel]);
 
   const keyDownCallback = useCallback(
     (event: KeyboardEvent) => {
@@ -107,6 +121,7 @@ export const AddItemPane: React.FC<IAddItemPaneProps> = ({
           className="AddItemPaneInput"
           type="text"
           placeholder="Write tags here, for example: Tag1 Tag2"
+          defaultValue={initialTagsValueSpaceSeperated}
         />
       </div>
       <div
@@ -140,7 +155,7 @@ export const AddItemPane: React.FC<IAddItemPaneProps> = ({
             className="AddItemPaneInputButton AddItemPaneInputButtonPrimary"
             onBlur={onAddButtonLostFocusCallback}
           >
-            Add
+            {editMode ? 'Save' : 'Add'}
           </div>
         </div>
 
