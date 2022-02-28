@@ -13,12 +13,14 @@ export interface ISearchResultPaneProps {
   searchText: string;
   searchResults: ISearchResultItem[];
   onDeleteItem: (id: string) => void;
+  onEditItem: (id: string, value: string, tags: string[]) => void;
 }
 
 const SearchResultPaneWithResults: React.FC<ISearchResultPaneProps> = ({
   searchText,
   searchResults,
   onDeleteItem,
+  onEditItem,
 }: ISearchResultPaneProps) => {
   const paneRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -40,6 +42,17 @@ const SearchResultPaneWithResults: React.FC<ISearchResultPaneProps> = ({
       }
     },
     [searchResults, onDeleteItem]
+  );
+
+  const onItemEditCbk = useCallback(
+    (index: number) => {
+      const item = searchResults[index];
+
+      if (item) {
+        onEditItem(item.id, item.value, item.tags);
+      }
+    },
+    [searchResults, onEditItem]
   );
 
   const keyDownCallback = useCallback(
@@ -143,6 +156,7 @@ const SearchResultPaneWithResults: React.FC<ISearchResultPaneProps> = ({
           index={index}
           onItemDelete={onItemDeleteCbk}
           onItemSelected={(indx) => setSelectedIndex(indx)}
+          onItemEdit={onItemEditCbk}
         />
       ))}
     </div>
@@ -153,6 +167,7 @@ export const SearchResultPane: React.FC<ISearchResultPaneProps> = ({
   searchText,
   searchResults,
   onDeleteItem,
+  onEditItem,
 }: ISearchResultPaneProps) => {
   if (searchResults.length === 0) {
     return null;
@@ -163,6 +178,7 @@ export const SearchResultPane: React.FC<ISearchResultPaneProps> = ({
       searchText={searchText}
       searchResults={searchResults}
       onDeleteItem={onDeleteItem}
+      onEditItem={onEditItem}
     />
   );
 };

@@ -67,6 +67,28 @@ export class StoreService {
       );
     }
   };
+
+  updateItem = async (
+    id: string,
+    value: string,
+    tags: string[]
+  ): Promise<void> => {
+    await this.initCache();
+
+    if (this.clipboardCache && value) {
+      const items = this.clipboardCache?.items.filter((item) => item.id === id);
+      if (items && items.length > 0) {
+        const item = items[0];
+        item.value = value;
+        item.tags = tags;
+
+        await localforage.setItem<IClipboard>(
+          this.clipboardStorageKey,
+          this.clipboardCache as IClipboard
+        );
+      }
+    }
+  };
 }
 
 export const StoreServiceGlobal = new StoreService();

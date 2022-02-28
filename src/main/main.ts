@@ -87,7 +87,7 @@ const getAssetPath = (...paths: string[]): string => {
 };
 
 const createTray = () => {
-  tray = new Tray(getAssetPath('icon.png'));
+  tray = new Tray(getAssetPath('./icons/16x16.png'));
   const contextMenu = Menu.buildFromTemplate([
     {
       label: 'Exit',
