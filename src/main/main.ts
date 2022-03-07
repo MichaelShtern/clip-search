@@ -18,6 +18,7 @@ import {
   Menu,
   globalShortcut,
   screen,
+  clipboard,
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -39,6 +40,26 @@ const windowHeight = 276;
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
 keyboard.config.autoDelayMs = 0;
+
+let clipboardText = '';
+
+const maxClipboardTextLength = 500;
+const clipboardSampleInterval = 5000;
+
+setInterval(() => {
+  if (mainWindow) {
+    const text: string = clipboard.readText();
+
+    if (
+      text &&
+      text.length <= maxClipboardTextLength &&
+      clipboardText !== text
+    ) {
+      clipboardText = text;
+      mainWindow?.webContents.send('clipbaord-copy', clipboardText);
+    }
+  }
+}, clipboardSampleInterval);
 
 ipcMain.on('toMain', (_, args) => {
   if (args === 'hide') {

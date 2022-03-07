@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ISearchResultItem } from '../../services/search-service';
+import {
+  ISearchResultItem,
+  SearchResultType,
+} from '../../services/search-service';
 import { convertPxToRem, convertRemToPx } from '../../utils/unit-converter';
 import { SearchResultItem } from './search-result-item';
 import './search-result-pane.css';
@@ -14,6 +17,7 @@ export interface ISearchResultPaneProps {
   searchResults: ISearchResultItem[];
   onDeleteItem: (id: string) => void;
   onEditItem: (id: string, value: string, tags: string[]) => void;
+  onAddItem: (value: string) => void;
 }
 
 const SearchResultPaneWithResults: React.FC<ISearchResultPaneProps> = ({
@@ -21,6 +25,7 @@ const SearchResultPaneWithResults: React.FC<ISearchResultPaneProps> = ({
   searchResults,
   onDeleteItem,
   onEditItem,
+  onAddItem,
 }: ISearchResultPaneProps) => {
   const paneRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -53,6 +58,15 @@ const SearchResultPaneWithResults: React.FC<ISearchResultPaneProps> = ({
       }
     },
     [searchResults, onEditItem]
+  );
+
+  const onItemAddCbk = useCallback(
+    (_index: number, value: string) => {
+      if (value) {
+        onAddItem(value);
+      }
+    },
+    [onAddItem]
   );
 
   const keyDownCallback = useCallback(
@@ -135,6 +149,26 @@ const SearchResultPaneWithResults: React.FC<ISearchResultPaneProps> = ({
     };
   }, [keyDownCallback]);
 
+  const clipboardTrackedIndex = searchResults.findIndex(
+    (r) => r.type === SearchResultType.ClipboardTracked
+  );
+
+  const storedItemIndex = searchResults.findIndex(
+    (r) => r.type === SearchResultType.Stored
+  );
+
+  const getSectionName = (index: number) => {
+    if (index === storedItemIndex) {
+      return 'Stored results';
+    }
+
+    if (index === clipboardTrackedIndex) {
+      return 'Frequently used in clipboard';
+    }
+
+    return undefined;
+  };
+
   return (
     <div
       tabIndex={0}
@@ -150,6 +184,8 @@ const SearchResultPaneWithResults: React.FC<ISearchResultPaneProps> = ({
           key={item.id}
           value={item.value}
           tags={item.tags}
+          type={item.type}
+          sectionName={getSectionName(index)}
           highlightedText={searchText}
           isSelected={index === selectedIndex}
           height={searchResultItemHeight}
@@ -157,6 +193,7 @@ const SearchResultPaneWithResults: React.FC<ISearchResultPaneProps> = ({
           onItemDelete={onItemDeleteCbk}
           onItemSelected={(indx) => setSelectedIndex(indx)}
           onItemEdit={onItemEditCbk}
+          onItemAdd={onItemAddCbk}
         />
       ))}
     </div>
@@ -168,6 +205,7 @@ export const SearchResultPane: React.FC<ISearchResultPaneProps> = ({
   searchResults,
   onDeleteItem,
   onEditItem,
+  onAddItem,
 }: ISearchResultPaneProps) => {
   if (searchResults.length === 0) {
     return null;
@@ -179,6 +217,7 @@ export const SearchResultPane: React.FC<ISearchResultPaneProps> = ({
       searchResults={searchResults}
       onDeleteItem={onDeleteItem}
       onEditItem={onEditItem}
+      onAddItem={onAddItem}
     />
   );
 };
