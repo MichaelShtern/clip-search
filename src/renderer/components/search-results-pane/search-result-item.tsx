@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { DeleteIcon, EditIcon } from '@fluentui/react-icons-mdl2';
-import { SearchResultType } from 'renderer/services/search-service';
 import { breakSearchQueryToNormalHighlighPairs } from '../../utils/text-utils';
+import { SearchResultType } from '../../services/search-service';
 import './search-result-item.css';
 
 export interface SearchResultItemProps {
