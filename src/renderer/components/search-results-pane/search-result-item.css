@@ -2,6 +2,37 @@
   color: #676767;
 }
 
+.SearchResultItem-NewSection {
+  color: #676767;
+  border-top: 1px solid #d1d3de;
+}
+
+.SearchResultSectionName {
+  visibility: hidden;
+  background-color: #f3f3f3;
+}
+
+.SearchResultItem-NewSection .SearchResultSectionName {
+  visibility: visible;
+  color: #0063bd;
+  right: 0rem;
+}
+
+.SearchResultItem:hover .SearchResultSectionName {
+  background-color: #e8e8e8;
+  right: 3.5rem;
+}
+
+.SearchResultItem-Selected:hover .SearchResultSectionName {
+  background-color: #0060c0;
+}
+
+.SearchResultItem-Selected .SearchResultSectionName {
+  color: white;
+  right: 3.5rem;
+  background-color: #0060c0;
+}
+
 .SearchResultItem:hover {
   background: #e8e8e8;
 }
@@ -38,6 +69,14 @@
 
 .SearchResultItem-Selected .SearchResultButtonContainer {
   visibility: visible;
+}
+
+.SearchResultItemButtonWrapper {
+  background: #e8e8e8;
+}
+
+.SearchResultItem-Selected .SearchResultItemButtonWrapper {
+  background-color: #0060c0;
 }
 
 .SearchResultItem .SearchResultItemButton:hover {

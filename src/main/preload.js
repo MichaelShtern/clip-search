@@ -8,4 +8,6 @@ contextBridge.exposeInMainWorld('api', {
       ipcRenderer.send(channel, data);
     }
   },
+
+  onClipboardCopy: (callback) => ipcRenderer.on('clipbaord-copy', callback),
 });

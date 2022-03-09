@@ -113,15 +113,18 @@ export const MainPage: React.FC = () => {
     searchBoxRef.current?.focus();
   }, [setAddItemPaneState, searchBoxRef]);
 
-  const onAddItemCallback = useCallback(() => {
-    setAddItemPaneState({
-      showPane: true,
-      isEditMode: false,
-      id: '',
-      tags: [],
-      value: searchText,
-    });
-  }, [setAddItemPaneState, searchText]);
+  const onAddItemCallback = useCallback(
+    (value?: string) => {
+      setAddItemPaneState({
+        showPane: true,
+        isEditMode: false,
+        id: '',
+        tags: [],
+        value: value ?? searchText,
+      });
+    },
+    [setAddItemPaneState, searchText]
+  );
 
   useEffect(() => {
     searchBoxRef.current?.focus();
@@ -149,6 +152,7 @@ export const MainPage: React.FC = () => {
           searchResults={searchResults.results}
           onDeleteItem={onDeleteItemCbk}
           onEditItem={onEditItemCbk}
+          onAddItem={onAddItemCallback}
         />
       )}
       {showItemNotFoundPane && !addItemPaneState.showPane && (
